@@ -23,28 +23,12 @@ class DirectorsSql(ConnectionSql):
         cursor.executemany(sql, val)
         
         cnx.commit()
-                
+        lastDirectorId = cursor.lastrowid    
         lg.info(f"{cursor.rowcount} record inserted.")
         self.close(cnx)
 
-    def insertDirectorsFullName(self, fullName): 
-        """
-        Pour les réalisatrise/réalisateur qui n'ont pas un nom complet 
-        du type ("prénom" "nom"), ils sont ajouté à fullname 
-        pour être traiter manuelement  
-        """
+        return lastDirectorId
 
-        cnx, cursor = self.connection()
-
-        sql = "INSERT INTO Directors (fullname_d) VALUES (%s)"
-        val = fullName
-        
-        cursor.executemany(sql, val)
-        
-        cnx.commit()
-                
-        lg.info(f"{cursor.rowcount} record inserted.")
-        self.close(cnx)
 
     def insertDirector(self, director):
         """
@@ -61,7 +45,35 @@ class DirectorsSql(ConnectionSql):
         cnx.commit()
 
         lg.info(f"{cursor.rowcount} record inserted.")
+        directorId = cursor.lastrowid
+
         self.close(cnx)
+
+        return directorId
+
+
+    def insertDirectorFullName(self, fullName): 
+        """
+        Pour les réalisatrise/réalisateur qui n'ont pas un nom complet 
+        du type ("prénom" "nom"), ils sont ajouté à fullname 
+        pour être traiter manuelement  
+        """
+
+        sql = "INSERT INTO Directors (fullname_d) VALUES (%s)"
+        val = [fullName]
+        
+        cnx, cursor = self.connection()
+        cursor.execute(sql, val, multi=True)
+        
+        cnx.commit()
+                
+        lg.info(f"{cursor.rowcount} record inserted.")
+        directorId = cursor.lastrowid
+
+        self.close(cnx)
+
+        return directorId
+
 
     def selectDirectors(self):
 

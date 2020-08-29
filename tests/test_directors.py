@@ -16,8 +16,8 @@ def test_directors():
     
     directors = [("toto", "junior"), ("ta", "pator"), ("", "final robert Carlos")]
 
-    #db.insertDirector(directors[0])
-    #db.insertDirectors(directors[1:])
+    db.insertDirector(directors[0])
+    db.insertDirectors(directors[1:])
 
     allDirectors = db.selectDirectors()
     assert len(allDirectors) == numberOfDirectors + 3

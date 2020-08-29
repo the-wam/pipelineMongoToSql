@@ -61,3 +61,20 @@ def test_genresById():
     listGenres  = db.selectGenres()
 
     assert len(listGenres) == numberOfGenres
+
+
+@pytest.mark.lastInsertId
+def test_lastInsertId():
+    db = GenresSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+
+    genre = ["insert", "tut"]
+
+    db.insertGenre(genre[0])
+
+    test2 = db.insertGenre(genre[1])
+
+    assert db.selectGenreByName(genre[0])[1] == genre[0]
+    assert db.selectGenreById(test2)[1] == genre[1]
+
+    db.deleteGenreByName(genre[0])
+    db.deleteGenreByName(genre[1])
