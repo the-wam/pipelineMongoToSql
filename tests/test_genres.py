@@ -31,6 +31,8 @@ def test_genreByName():
 
     assert res[1] == toto1
     assert len(allGenre) == numberOfGenres
+
+    
 @pytest.mark.genres
 def test_genresById():
     db = GenresSql(config["host"], config["user"], config["password"], config["database"], config["port"])

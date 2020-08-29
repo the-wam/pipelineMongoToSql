@@ -58,9 +58,9 @@ def test_movies():
     assert len(listMovies) == numberOfMovies + 1
 
     movieInserted = db.selectMoviesByName(movie["title"])
-    assert movieInserted[0][1] == movie["title"]
+    assert movieInserted[1] == movie["title"]
 
-    movieId = movieInserted[0][0]
+    movieId = movieInserted[0]
 
     movieById = db.selectMovieById(movieId)
     assert movieById[1] == movie["title"]
