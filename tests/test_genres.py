@@ -43,7 +43,7 @@ def test_genresById():
     listGenres  = db.selectGenres()
 
     # assert if add work 
-    assert len(listGenres) == 23 + 2
+    assert len(listGenres) == numberOfGenres + 2
 
     # test select by Id
     for genre in listGenres:
@@ -60,4 +60,4 @@ def test_genresById():
     # assert return to initial situation
     listGenres  = db.selectGenres()
 
-    assert len(listGenres) == 23
+    assert len(listGenres) == numberOfGenres
