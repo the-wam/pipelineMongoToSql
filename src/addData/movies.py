@@ -61,7 +61,7 @@ def addMovieControler(dataOneDict):
         tomates_viewer_m, tomates_critic_m = None, None
 
     try:
-        movieDB = MoviesSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+        movieDB = MoviesSql(**config)
         movieId = movieDB.insertMovie(title_m, year_m, imdb_rating_m, imdb_vote_m, poster_m, full_plot_m, tomates_viewer_m, tomates_critic_m, runtime_m)
         
     except IntegrityError as e:
@@ -75,7 +75,7 @@ def addMovieControler(dataOneDict):
 def movieGenres(dataOneDict, movieId):
     
     # Connection database
-    genresDB = GenresSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+    genresDB = GenresSql(**config)
 
     # returns the list of keys of my dictionary
     listMovieKeys = dataOneDict.keys()
@@ -98,7 +98,7 @@ def movieGenres(dataOneDict, movieId):
 def moviesActors(dataOneDict, movieId):
 
     # Connection database
-    actorsDb = ActorsSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+    actorsDb = ActorsSql(**config)
 
     # returns the list of keys of my dictionary
     listMovieKeys = dataOneDict.keys()
@@ -117,7 +117,7 @@ def moviesActors(dataOneDict, movieId):
                     actorId = actorsDb.insertActor(actorfullname)
                     castingId = actorsDb.insertCasting(actorId, movieId)
             else:
-                actorId = actorsDb.selectActorByName(fullName=actor)
+                actorId = actorsDb.selectActorByName(fullname=actor)
                 if actorId:
                     castingId = actorsDb.insertCasting(actorId[0], movieId)
                 else:
@@ -126,6 +126,36 @@ def moviesActors(dataOneDict, movieId):
     
     return castingId
 
+def moviesDirectors(dataOneDict, movieId):
 
+    # Connection database
+    directorsDb = DirectorsSql(**config)
+
+    # returns the list of keys of my dictionary
+    listMovieKeys = dataOneDict.keys()
+
+    # returns the list of directors
+    directors = attributeValue('directors', listMovieKeys, dataOneDict)
+
+    # add relationships between film and directors
+    if directors:
+        for director in directors:
+            directorfullname = director.split()
+            if len(directorfullname) == 2:
+                directorId = directorsDb.selectDirectorByName(directorfullname[0], directorfullname[1])
+                if directorId:
+                    directingId = directorsDb.insertDirectingBy(directorId[0], movieId)
+                else:
+                    directorId = directorsDb.insertDirector(directorfullname)
+                    directingId = directorsDb.insertDirectingBy(directorId, movieId)
+            else:
+                directorId = directorsDb.selectDirectorByName(fullname=director)
+                if directorId:
+                    directingId = directorsDb.insertDirectingBy(directorId[0], movieId)
+                else:
+                    directorId = directorsDb.insertDirector(director)
+                    directingId = directorsDb.insertDirectingBy(directorId, movieId)
+    
+    return directingId
 
 

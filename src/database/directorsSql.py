@@ -10,6 +10,12 @@ lg.basicConfig(level=lg.DEBUG)
 
 class DirectorsSql(ConnectionSql):
 
+    ##########################################################################################################################################
+    ##########################################################################################################################################
+                                                                   # Directors
+    ##########################################################################################################################################
+    ##########################################################################################################################################
+
     def insertDirectors(self, listDirectors):
         """
 
@@ -104,9 +110,9 @@ class DirectorsSql(ConnectionSql):
         
         return director
 
-    def selectDirectorByName(self,firstname = None, lastname =None):
+    def selectDirectorByName(self,firstname = None, lastname = None, fullname = None):
 
-        if not firstname and not lastname:
+        if not firstname and not lastname and not fullname:
             return None
         elif firstname and not lastname:
             sql = "SELECT * FROM Directors WHERE firstname_d = %s"
@@ -114,6 +120,9 @@ class DirectorsSql(ConnectionSql):
         elif lastname and not firstname:
             sql = "SELECT * FROM Directors WHERE lastname_d = %s"
             val = [lastname]
+        elif fullname:
+            sql = "SELECT * FROM Directors WHERE fullname_d = %s"
+            val = [fullname]
         else:
             sql = "SELECT * FROM Directors WHERE firstname_d = %s and lastname_d = %s"
             val = [firstname, lastname]
@@ -122,11 +131,12 @@ class DirectorsSql(ConnectionSql):
 
         cursor.execute(sql, val)
 
-        listDirectors = cursor.fetchone()
+        director = cursor.fetchone()
 
         self.close(cnx)
         
-        return listDirectors
+        return director
+
 
     def selectDirectorsNull(self): 
 
@@ -167,3 +177,59 @@ class DirectorsSql(ConnectionSql):
         self.close(cnx)
         
         lg.info(f"{cursor.rowcount} deleted") 
+
+    ##########################################################################################################################################
+    ##########################################################################################################################################
+                                                                   # Directing_by
+    ##########################################################################################################################################
+    ##########################################################################################################################################
+
+    def insertDirectingBy(self, directorId, movieId):
+
+        sql = "INSERT INTO Directing_by (id_d, id_m) VALUES (%s,%s)"
+        val = (directorId, movieId)
+      
+        cnx, cursor = self.connection()
+        cursor.execute(sql, val)
+
+        cnx.commit()
+
+        lg.info(f"{cursor.rowcount} record inserted.")
+
+        directingId = cursor.lastrowid
+        
+        self.close(cnx)
+
+        return directingId
+
+
+    def selectDirectingById(self, directingId):
+
+        cnx, cursor = self.connection()
+
+        sql = "SELECT * FROM Directing_by WHERE id_b = %s"
+        val = [directingId]
+        
+        cursor.execute(sql, val)
+
+        directingMovie = cursor.fetchone()
+        lg.info(f"{cursor.rowcount} record selected.")
+        self.close(cnx)
+        
+        return directingMovie
+
+
+    def deleteDirectingById(self, directingId):
+
+        sql = "DELETE FROM Directing_by WHERE id_b = %s"
+        val = [directingId]
+
+        cnx, cursor = self.connection()
+        cursor.execute(sql, val)
+
+        cnx.commit()
+
+        lg.info(f"{cursor.rowcount} record deleted.")
+
+        self.close(cnx)
+    

@@ -5,7 +5,7 @@ from mysql.connector import errorcode
 
 from src.database import ConnectionSql
 import logging as lg
-lg.basicConfig(level=lg.DEBUG)
+lg.basicConfig(level=lg.INFO)
 
 class MoviesSql(ConnectionSql):
 
@@ -14,7 +14,7 @@ class MoviesSql(ConnectionSql):
         sql = """INSERT INTO movies (title_m, year_m,imdb_rating_m,imdb_vote_m,poster_m,full_plot_m,tomates_viewer_m,tomates_critic_m,runtime_m)
 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
         val = (title_m, 
-            year_m, 
+            year_m,
             imdb_rating_m, 
             imdb_vote_m, 
             poster_m,
@@ -60,7 +60,7 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
 
         cursor.execute(sql, val)
 
-        moviesList = cursor.fetchone()
+        moviesList = cursor.fetchall()
 
         self.close(cnx)
 

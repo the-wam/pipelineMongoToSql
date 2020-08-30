@@ -35,7 +35,7 @@ def test_genreByName():
     
 @pytest.mark.genres
 def test_genresById():
-    db = GenresSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+    db = GenresSql(**config)
 
     toto2 = [("toto2", ), ("toto3",)]
 
@@ -67,7 +67,7 @@ def test_genresById():
 
 @pytest.mark.lastInsertId
 def test_lastInsertId():
-    db = GenresSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+    db = GenresSql(**config)
 
     genre = ["insert", "tut"]
 

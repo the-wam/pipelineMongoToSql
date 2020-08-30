@@ -12,7 +12,7 @@ numberOfDirectors = dbValues["numberOfDirectors"]
 
 @pytest.mark.directors
 def test_directors():
-    db = DirectorsSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+    db = DirectorsSql(**config)
     
     directors = [("toto", "junior"), ("ta", "pator"), ("", "final robert Carlos")]
 

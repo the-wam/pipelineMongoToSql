@@ -44,7 +44,7 @@ class ConnectionSql:
             else:
                 lg.critical(err)
         
-        lg.info("Info : connection open")
+        lg.debug("Info : connection open")
 
         cursor = cnx.cursor()
 
@@ -54,7 +54,7 @@ class ConnectionSql:
         " close the connection to the database"
         cnx.close()
 
-        lg.info("info : connection close")
+        lg.debug("info : connection close")
 
     def showDatabase(self):
 

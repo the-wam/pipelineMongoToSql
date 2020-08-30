@@ -12,7 +12,7 @@ numberOfActors = dbValues["numberOfActors"]
 
 @pytest.mark.actors
 def test_actors():
-    db = ActorsSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+    db = ActorsSql(**config)
     
     actors = [("toto", "junior"), ("ta", "pator"), ("", "final robert Carlos")]
 

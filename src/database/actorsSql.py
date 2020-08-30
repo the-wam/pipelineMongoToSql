@@ -134,9 +134,9 @@ class ActorsSql(ConnectionSql):
         
         return actor
 
-    def selectActorByName(self,firstname = None, lastname = None, fullName = None):
+    def selectActorByName(self,firstname = None, lastname = None, fullname = None):
 
-        if not firstname and not lastname:
+        if not firstname and not lastname and not fullname:
             return None
         elif firstname and not lastname:
             sql = "SELECT * FROM actors WHERE firstname_a = %s"
@@ -144,9 +144,9 @@ class ActorsSql(ConnectionSql):
         elif lastname and not firstname:
             sql = "SELECT * FROM actors WHERE lastname_a = %s"
             val = [lastname]
-        elif fullName:
-            sql = "SELECT * FROM actors WHERE lastname_a = %s"
-            val = [fullName]    
+        elif fullname:
+            sql = "SELECT * FROM actors WHERE fullname_a = %s"
+            val = [fullname]    
         else:
             sql = "SELECT * FROM actors WHERE firstname_a = %s and lastname_a = %s"
             val = [firstname, lastname]
@@ -155,11 +155,11 @@ class ActorsSql(ConnectionSql):
 
         cursor.execute(sql, val)
 
-        listActors = cursor.fetchone()
+        actor = cursor.fetchone()
 
         self.close(cnx)
         
-        return listActors
+        return actor
 
     def selectActorsNull(self): 
 

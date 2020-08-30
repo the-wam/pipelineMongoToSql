@@ -10,7 +10,7 @@ def test_connection():
 
     tables = [('actors',), ('casting_with',), ('comments',), ('directing_by',), ('directors',), ('genres',), ('movies',), ('type_movies',), ('users',)]
 
-    db = ConnectionSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+    db = ConnectionSql(**config)
 
     res = db.showDatabase()
     print(res)
