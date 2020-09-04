@@ -14,27 +14,30 @@ numberOfDirectors = dbValues["numberOfDirectors"]
 def test_directors():
     db = DirectorsSql(**config)
     
-    directors = [("toto", "junior"), ("ta", "pator"), ("", "final robert Carlos")]
+    directors = [("toto", "junior"), ("ta", "pator"), ("gfsfgdf", "pator"), ("", "final robert Carlos")]
+
+    lenAllDirectors = len(db.selectDirectors())
 
     db.insertDirector(directors[0])
-    db.insertDirectors(directors[1:])
+    db.insertDirectors(directors[1:-1])
+    db.insertDirectorFullName(directors[-1][1])
 
     allDirectors = db.selectDirectors()
-    assert len(allDirectors) == numberOfDirectors + 3
+    assert len(allDirectors) == lenAllDirectors + len(directors)
 
     selectByName = db.selectDirectorByName(directors[0][0], directors[0][1])
-    assert selectByName[1:] == directors[0]
+    assert selectByName[1:-1] == directors[0]
 
     selectByID = db.selectDirectorByID(selectByName[0] + 1)
-    assert selectByID[1:] == directors[1]
+    assert selectByID[1:-1] == directors[1]
 
     db.updateDirector("final robert Carlos", "final", "robert Carlos")
     
-    for x in directors[:-1]:
-        actorId = db.selectDirectorByName(x[0], x[1])[0]
+    for director in directors[:-1]:
+        actorId = db.selectDirectorByName(director[0], director[1])[0]
         db.deleteDirectorById(actorId)
 
-    db.deleteDirectorById(selectByName[0] + 2)
+    db.deleteDirectorById(selectByName[0] + 3)
 
     allDirectors = db.selectDirectors()
-    assert len(allDirectors) == numberOfDirectors
+    assert len(allDirectors) == lenAllDirectors

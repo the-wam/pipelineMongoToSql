@@ -18,13 +18,13 @@ def test_addMovie():
     # Data for Test
     movie = {'_id': {'$oid': '573a1390f29313caabcd4135'},
             'plot': 'Three men hammer on an anvil and pass a bottle of beer around.',
-            'genres': ['Short'],
+            'genres': ['Shxvsxort'],
             'poster': 'url_link',
             'cast': ['Charlesaa Kayseraa'],
             'title': 'titre',
             'fullplot': 'A stationary camera looks at a large anvil with a blacksmith behind it and one on either side. The smith in the middle draws a heated metal rod from the fire, places it on the anvil, and all three begin a rhythmic hammering. After several blows, the metal goes back in the fire. One smith pulls out a bottle of beer, and they each take a swig. Then, out comes the glowing metal and the hammering resumes.',
             'countries': ['USA'],
-            'directors': ['William Dickson'],
+            'directors': ['William efrsfs Dickson'],
             'rated': 'UNRATED',
             'year': 1992,
             'imdb': {'rating': 6.2, 'votes': 1189},
@@ -50,7 +50,7 @@ def test_addMovie():
     assert movieSqlId[3] == movie["runtime"] # check runtime
     assert movieSqlId[4] == None # check None tomates_critic
 
-
+    
     # Add types of this movie
     typesId = movieGenres(movie, movieId)
     dbGenres = GenresSql(**config)
@@ -66,7 +66,7 @@ def test_addMovie():
     # Add Actors of this movie
     directingId = moviesDirectors(movie, movieId)
     dbDirectors = DirectorsSql(**config)
-    directorId = dbDirectors.selectDirectorByName('William', 'Dickson')[0] 
+    directorId = dbDirectors.selectDirectorByName(fullname=movie["directors"][0])[0] 
     assert dbDirectors.selectDirectingById(directingId) == (directingId, directorId, movieId)
 
 
@@ -75,7 +75,7 @@ def test_addMovie():
     
     dbGenres.deleteTypeMovieById(typesId)
     dbGenres.deleteGenreByName(movie["genres"][0])
-    
+
     dbActors.deleteCastingById(castingId)
     dbActors.deleteActorById(actorId)
 

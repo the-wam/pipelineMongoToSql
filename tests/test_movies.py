@@ -10,8 +10,8 @@ lg.basicConfig(level=lg.DEBUG)
 config = openJson("config/config.json")
 
 # Database values :
-dbValues = openJson("config/dbValues.json")
-numberOfMovies = dbValues["numberOfMovies"]
+# dbValues = openJson("config/dbValues.json")
+# numberOfMovies = dbValues["numberOfMovies"]
 
 @pytest.mark.movies
 def test_movies():
@@ -33,6 +33,8 @@ def test_movies():
             'runtime': 137}
 
     db = MoviesSql(**config)
+
+    lenListMovies = len(db.allMovies())
         
     movieId = db.insertMovie(movie["title"],
         movie["year"],
@@ -45,7 +47,7 @@ def test_movies():
         movie["runtime"])
 
     listMovies = db.allMovies()
-    assert len(listMovies) == numberOfMovies + 1
+    assert len(listMovies) == lenListMovies + 1
 
     movieInserted = db.selectMoviesByName(movie["title"])
     assert movieInserted[0][0] == movieId 
@@ -59,4 +61,4 @@ def test_movies():
     db.deleteMovieById(movieId)
 
     listMovies = db.allMovies()
-    assert len(listMovies) == numberOfMovies
+    assert len(listMovies) == lenListMovies

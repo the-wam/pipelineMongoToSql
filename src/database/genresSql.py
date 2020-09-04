@@ -6,7 +6,7 @@ from mysql.connector import errorcode
 from src import openJson
 from src.database import ConnectionSql
 import logging as lg
-lg.basicConfig(level=lg.DEBUG)
+#lg.basicConfig(level=lg.DEBUG)
 
 class GenresSql(ConnectionSql):
     ##########################################################################################################################################
@@ -158,6 +158,21 @@ class GenresSql(ConnectionSql):
 
         sql = "SELECT * FROM type_movies WHERE id_t = %s"
         val = [typeMovieId]
+        
+        cursor.execute(sql, val)
+
+        typeMovie = cursor.fetchone()
+        lg.info(f"{cursor.rowcount} record selected.")
+        self.close(cnx)
+        
+        return typeMovie
+
+    def selectTypeMovieByGenreIdMovieId(self, genreId, movieId):
+
+        cnx, cursor = self.connection()
+
+        sql = "SELECT * FROM type_movies WHERE id_g = %s and id_m = %s"
+        val = (genreId, movieId)
         
         cursor.execute(sql, val)
 

@@ -12,6 +12,7 @@ config = openJson("config/config.json")
 class ConnectionSql:
 
     def __init__(self, host, user, password, database, port):
+
         self.__host__ = host
         self.__user__ = user
         self.__password__ = password
@@ -71,8 +72,15 @@ class ConnectionSql:
         return showtables
 
 
+    def querySQL(self, query):
+        sql = query
 
-        
+        cnx, cursor = self.connection()
 
+        cursor.execute(sql)
 
+        res = cursor.fetchall()
 
+        self.close(cnx)
+
+        return res

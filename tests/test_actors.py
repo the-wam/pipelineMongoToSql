@@ -14,27 +14,31 @@ numberOfActors = dbValues["numberOfActors"]
 def test_actors():
     db = ActorsSql(**config)
     
-    actors = [("toto", "junior"), ("ta", "pator"), ("", "final robert Carlos")]
+    actors = [("toto", "junior"), ("ta", "pator"), ("gfsfgdf", "pator"), ("", "final robert Carlos")]
+
+    lenAllActors = len(db.selectActors())
 
     db.insertActor(actors[0])
-    db.insertActors(actors[1:])
+    db.insertActors(actors[1:-1])
+    db.insertActorFullName(actors[-1][1])
 
-    allActors = db.selectActors()
-    assert len(allActors) == numberOfActors + 3
+    lenAllActorsInsert = len(db.selectActors())
+
+    assert lenAllActorsInsert == lenAllActors + len(actors)
 
     selectByName = db.selectActorByName(actors[0][0], actors[0][1])
-    assert selectByName[1:] == actors[0]
+    assert selectByName[1:-1] == actors[0]
 
     selectByID = db.selectActorByID(selectByName[0] + 1)
-    assert selectByID[1:] == actors[1]
+    assert selectByID[1:-1] == actors[1]
 
     db.updateActor("final robert Carlos", "final", "robert Carlos")
     
-    for x in actors[:-1]:
-        actorId = db.selectActorByName(x[0], x[1])[0]
+    for actor in actors[:-1]:
+        actorId = db.selectActorByName(actor[0], actor[1])[0]
         db.deleteActorById(actorId)
 
-    db.deleteActorById(selectByName[0] + 2)
+    db.deleteActorById(selectByName[0] + 3)
 
     allActors = db.selectActors()
-    assert len(allActors) == numberOfActors
+    assert len(allActors) == lenAllActors

@@ -6,7 +6,7 @@ from mysql.connector import errorcode
 from src import openJson
 from src.database import ConnectionSql
 import logging as lg
-lg.basicConfig(level=lg.DEBUG)
+#lg.basicConfig(level=lg.DEBUG)
 
 class DirectorsSql(ConnectionSql):
 
@@ -69,7 +69,7 @@ class DirectorsSql(ConnectionSql):
         val = [fullName]
         
         cnx, cursor = self.connection()
-        cursor.execute(sql, val, multi=True)
+        cursor.execute(sql, val)
         
         cnx.commit()
                 
@@ -154,7 +154,7 @@ class DirectorsSql(ConnectionSql):
 
     def updateDirector(self, oldName, newFirstname, newLastname):
 
-        sql = "UPDATE Directors set firstname_d = %s, lastname_d = %s WHERE lastname_d = %s"
+        sql = "UPDATE Directors set firstname_d = %s, lastname_d = %s WHERE fullname_d = %s"
         val = (newFirstname, newLastname, oldName)
         
         cnx, cursor = self.connection()
@@ -218,6 +218,21 @@ class DirectorsSql(ConnectionSql):
         
         return directingMovie
 
+
+    def selectDirectingByDirectorIdMovieId(self, directorId, movieId):
+
+        cnx, cursor = self.connection()
+
+        sql = "SELECT * FROM Directing_by WHERE id_d = %s and id_m = %s"
+        val = (directorId, movieId)
+        
+        cursor.execute(sql, val)
+
+        directingMovie = cursor.fetchone()
+        lg.info(f"{cursor.rowcount} record selected.")
+        self.close(cnx)
+        
+        return directingMovie
 
     def deleteDirectingById(self, directingId):
 

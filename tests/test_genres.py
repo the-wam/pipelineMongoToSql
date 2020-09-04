@@ -6,20 +6,21 @@ from src import openJson
 # Comnnection Database
 config = openJson("config/config.json")
 
-# Database values :
-dbValues = openJson("config/dbValues.json")
-numberOfGenres = dbValues["numberOfGenres"]
 
 
 @pytest.mark.genres
 def test_genreByName():
-    db = GenresSql(config["host"], config["user"], config["password"], config["database"], config["port"])
+    db = GenresSql(**config)
+
+    lenAllGenre = len(db.selectGenres())
 
     toto1 = "toto1"
 
     # test function insert one genre
     db.insertGenre(toto1)
 
+    allGenre = db.selectGenres()
+    assert len(allGenre) == lenAllGenre + 1
     # test function select by name
     res = db.selectGenreByName(toto1)
 
@@ -30,7 +31,7 @@ def test_genreByName():
     allGenre = db.selectGenres()
 
     assert res[1] == toto1
-    assert len(allGenre) == numberOfGenres
+    assert len(allGenre) == lenAllGenre
 
     
 @pytest.mark.genres
@@ -39,13 +40,14 @@ def test_genresById():
 
     toto2 = [("toto2", ), ("toto3",)]
 
+    lenAllGenre = len(db.selectGenres())
     db.insertGenres(toto2)
 
     # select FORMAT : [(1, 'Action'), (3, 'Adventure'), (4, 'Drama'), (5, 'Sci-Fi'), (6, 'News'), (7, 'Romance'), ...]
     listGenres  = db.selectGenres()
 
     # assert if add work 
-    assert len(listGenres) == numberOfGenres + 2
+    assert len(listGenres) == lenAllGenre + 2
 
     # test select by Id
     for genre in listGenres:
@@ -62,7 +64,7 @@ def test_genresById():
     # assert return to initial situation
     listGenres  = db.selectGenres()
 
-    assert len(listGenres) == numberOfGenres
+    assert len(listGenres) == lenAllGenre
 
 
 @pytest.mark.lastInsertId

@@ -5,7 +5,7 @@ from mysql.connector import errorcode
 
 from src.database import ConnectionSql
 import logging as lg
-lg.basicConfig(level=lg.INFO)
+#lg.basicConfig(level=lg.INFO)
 
 class MoviesSql(ConnectionSql):
 
@@ -65,6 +65,25 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
         self.close(cnx)
 
         return moviesList
+
+
+    def selectMovieByNameYearRuntime(self, movieTitle, movieYear, movieRuntime):
+
+        sql = """ SELECT id_m, title_m, year_m, runtime_m, tomates_critic_m FROM Movies WHERE title_m = %s and year_m = %s and runtime_m = %s"""
+
+        val = (movieTitle, movieYear, movieRuntime)
+
+        cnx, cursor = self.connection()
+
+        cursor.execute(sql, val)
+
+        movie = cursor.fetchone()
+
+        self.close(cnx)
+
+        return movie
+
+    
 
     def selectMovieById(self, movieId):
 

@@ -1,6 +1,6 @@
 from mysql.connector import IntegrityError
 import logging as lg
-lg.basicConfig(level=lg.DEBUG)
+
 
 from src.database import GenresSql, MoviesSql, DirectorsSql, ActorsSql
 from src import openJson
@@ -11,7 +11,7 @@ def attributeValue(keyName, listOfKeys, dataOneDict):
     if keyName in listOfKeys:
         return dataOneDict[keyName]
     else:
-        lg.info(f"{str(dataOneDict['title'])} has not {keyName}")
+        lg.info(f"{str(dataOneDict)} has not {keyName}")
 
         return None
 
@@ -24,6 +24,7 @@ def addMovieControler(dataOneDict):
         title_m = dataOneDict["title"]
     else:
         lg.critical(f"This data has not title : {dataOneDict}")
+        title_m = ""
         return False
 
     year_m = attributeValue("year", listMovieKeys, dataOneDict)
@@ -60,16 +61,12 @@ def addMovieControler(dataOneDict):
     else:
         tomates_viewer_m, tomates_critic_m = None, None
 
-    try:
-        movieDB = MoviesSql(**config)
+    movieDB = MoviesSql(**config)
+    movieId = movieDB.selectMovieByNameYearRuntime(title_m, year_m, runtime_m)
+    if not movieId:
         movieId = movieDB.insertMovie(title_m, year_m, imdb_rating_m, imdb_vote_m, poster_m, full_plot_m, tomates_viewer_m, tomates_critic_m, runtime_m)
-        
-    except IntegrityError as e:
-        lg.info(f"{str(title_m)} already exist")
-        lg.info(e)
-        movieId = None
-
-    return movieId
+        return movieId
+    return movieId[0]
 
 
 def movieGenres(dataOneDict, movieId):
@@ -84,11 +81,14 @@ def movieGenres(dataOneDict, movieId):
     genres = attributeValue("genres", listMovieKeys, dataOneDict)
 
     # add relationships between film and genres
+    typeMoviesId = None
     if genres: 
         for genre in genres:
             genreId = genresDB.selectGenreByName(genre)
             if genreId:
-                typeMoviesId = genresDB.insertTypeMovie(genreId[0], movieId)
+                selectType = genresDB.selectTypeMovieByGenreIdMovieId(genreId[0], movieId)
+                if not selectType:
+                    typeMoviesId = genresDB.insertTypeMovie(genreId[0], movieId)
             else:
                 genreId = genresDB.insertGenre(genre)
                 typeMoviesId = genresDB.insertTypeMovie(genreId, movieId)
@@ -105,6 +105,8 @@ def moviesActors(dataOneDict, movieId):
 
     # returns the list of actors
     actors = attributeValue('cast', listMovieKeys, dataOneDict)
+
+    castingId = None
     # add relationships between film and actors
     if actors:
         for actor in actors:
@@ -112,16 +114,20 @@ def moviesActors(dataOneDict, movieId):
             if len(actorfullname) == 2:
                 actorId = actorsDb.selectActorByName(actorfullname[0], actorfullname[1])
                 if actorId:
-                    castingId = actorsDb.insertCasting(actorId[0], movieId)
+                    selectCasting = actorsDb.selectCastingByActorIdMovieId(actorId[0], movieId)
+                    if not selectCasting:
+                        castingId = actorsDb.insertCasting(actorId[0], movieId)
                 else:
                     actorId = actorsDb.insertActor(actorfullname)
                     castingId = actorsDb.insertCasting(actorId, movieId)
             else:
                 actorId = actorsDb.selectActorByName(fullname=actor)
                 if actorId:
-                    castingId = actorsDb.insertCasting(actorId[0], movieId)
+                    selectCasting = actorsDb.selectCastingByActorIdMovieId(actorId[0], movieId)
+                    if not selectCasting:                   
+                        castingId = actorsDb.insertCasting(actorId[0], movieId)
                 else:
-                    actorId = actorsDb.insertActor(actor)
+                    actorId = actorsDb.insertActorFullName(actor)
                     castingId = actorsDb.insertCasting(actorId, movieId)
     
     return castingId
@@ -138,6 +144,7 @@ def moviesDirectors(dataOneDict, movieId):
     directors = attributeValue('directors', listMovieKeys, dataOneDict)
 
     # add relationships between film and directors
+    directingId = None
     if directors:
         for director in directors:
             directorfullname = director.split()
@@ -153,7 +160,7 @@ def moviesDirectors(dataOneDict, movieId):
                 if directorId:
                     directingId = directorsDb.insertDirectingBy(directorId[0], movieId)
                 else:
-                    directorId = directorsDb.insertDirector(director)
+                    directorId = directorsDb.insertDirectorFullName(director)
                     directingId = directorsDb.insertDirectingBy(directorId, movieId)
     
     return directingId

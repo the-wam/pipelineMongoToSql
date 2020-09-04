@@ -6,7 +6,7 @@ from mysql.connector import errorcode
 from src import openJson
 from src.database import ConnectionSql
 import logging as lg
-lg.basicConfig(level=lg.DEBUG)
+#lg.basicConfig(level=lg.DEBUG)
 
 class ActorsSql(ConnectionSql):
 
@@ -85,7 +85,7 @@ class ActorsSql(ConnectionSql):
         val = [fullName]
         
         cnx, cursor = self.connection()
-        cursor.execute(sql, val, multi=True)
+        cursor.execute(sql, val)
 
         cnx.commit()
 
@@ -161,7 +161,7 @@ class ActorsSql(ConnectionSql):
         
         return actor
 
-    def selectActorsNull(self): 
+    def selectActorsNull(self):
 
         cnx, cursor = self.connection()
 
@@ -177,7 +177,7 @@ class ActorsSql(ConnectionSql):
 
     def updateActor(self, oldName, newFirstname, newLastname):
 
-        sql = "UPDATE actors set firstname_a = %s, lastname_a = %s WHERE lastname_a = %s"
+        sql = "UPDATE actors set firstname_a = %s, lastname_a = %s WHERE fullname_a = %s"
         val = (newFirstname, newLastname, oldName)
         
         cnx, cursor = self.connection()
@@ -241,6 +241,21 @@ class ActorsSql(ConnectionSql):
         
         return castingMovie
 
+
+    def selectCastingByActorIdMovieId(self, actorId, movieId):
+
+        cnx, cursor = self.connection()
+
+        sql = "SELECT * FROM casting_with WHERE id_a = %s and id_m = %s"
+        val = (actorId, movieId)
+        
+        cursor.execute(sql, val)
+
+        castingMovie = cursor.fetchone()
+        lg.info(f"{cursor.rowcount} record selected.")
+        self.close(cnx)
+        
+        return castingMovie
 
     def deleteCastingById(self, castingId):
 
