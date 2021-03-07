@@ -58,7 +58,7 @@ class ConnectionSql:
         lg.debug("info : connection close")
 
     def showDatabase(self):
-
+        
         sql = "SHOW TABLES"
 
         cnx, cursor = self.connection()
@@ -73,6 +73,7 @@ class ConnectionSql:
 
 
     def querySQL(self, query):
+        
         sql = query
 
         cnx, cursor = self.connection()

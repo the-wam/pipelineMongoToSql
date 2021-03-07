@@ -2,9 +2,7 @@
 # coding: utf-8
 
 from src import openJson
-#from src.database import *
-from src.addData import addMovieControler, movieGenres, moviesActors, moviesDirectors
-
+from src.addData.moviesController import moviesController
 import argparse
 
 
@@ -20,22 +18,12 @@ if "__main__" == __name__:
     # load data
     movies = openJson(args.filePath)
 
+    # Data ingetion 
+    moviesAdder = moviesController()
+    moviesAdder.run(movies)
 
-    for index, movie in enumerate(movies):
 
-        # add general informaion of movie
-        movieId = addMovieControler(movie)
-
-        # add genres
-        movieGenres(movie, movieId)
-
-        # add Actors
-        moviesActors(movie, movieId)
-
-        # add Directors
-        moviesDirectors(movie, movieId)
-
-        print(index, movie["title"])
+        
 
 
 

@@ -134,10 +134,10 @@ class GenresSql(ConnectionSql):
     ##########################################################################################################################################
     ##########################################################################################################################################
 
-    def insertTypeMovie(self, idMovie, idGenre):
+    def insertTypeMovie(self, idGenre, idMovie):
 
-        sql = "INSERT INTO type_movies (id_m, id_g) VALUES (%s,%s)"
-        val = (idMovie, idGenre)
+        sql = "INSERT INTO type_movies (id_g, id_m) VALUES (%s,%s)"
+        val = (idGenre, idMovie)
       
         cnx, cursor = self.connection()
         cursor.execute(sql, val)

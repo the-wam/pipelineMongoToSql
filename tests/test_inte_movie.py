@@ -3,7 +3,8 @@ import pytest
 
 from src import openJson
 from src.database import GenresSql, MoviesSql, DirectorsSql, ActorsSql
-from src.addData import attributeValue, addMovieControler, movieGenres, moviesActors, moviesDirectors
+from src.addData import AddActors, AddDirectors, AddGenres, AddMovie
+
 
 import logging as lg
 lg.basicConfig(level=lg.DEBUG)
@@ -33,7 +34,8 @@ def test_addMovie():
             'runtime': 137}
 
     # Add general parameters of movie
-    movieId = addMovieControler(movie)
+    MovieAdder = AddMovie(movie)
+    movieId = MovieAdder.runAddMovie()
 
 
     # Connection database and assert if we find this movie
@@ -48,23 +50,28 @@ def test_addMovie():
     assert movieSqlId[1] == movie["title"] # check title
     assert movieSqlId[2] == movie["year"] # check year
     assert movieSqlId[3] == movie["runtime"] # check runtime
-    assert movieSqlId[4] == None # check None tomates_critic
+    assert movieSqlId[4] == 0.0 # check None tomates_critic
 
     
     # Add types of this movie
-    typesId = movieGenres(movie, movieId)
+    genresAdd = AddGenres(movie, movieId)
+    typesId = genresAdd.runAddGenres()
+    print(typesId)
+    
     dbGenres = GenresSql(**config)
     genreId = dbGenres.selectGenreByName(movie['genres'][0])[0]
-    assert dbGenres.selectTypeMovieById(typesId) == (typesId, movieId, genreId)
+    assert dbGenres.selectTypeMovieById(typesId) == (typesId, genreId, movieId)
 
     # Add Actors of this movie
-    castingId = moviesActors(movie, movieId)
+    actorsAdder = AddActors(movie, movieId)
+    castingId = actorsAdder.runAddActors()
     dbActors = ActorsSql(**config)
     actorId = dbActors.selectActorByName('Charlesaa', 'Kayseraa')[0]
     assert dbActors.selectCastingById(castingId) == (castingId, actorId, movieId)
 
     # Add Actors of this movie
-    directingId = moviesDirectors(movie, movieId)
+    directorsAdder = AddDirectors(movie, movieId)
+    directingId = directorsAdder.runAddDirectors()
     dbDirectors = DirectorsSql(**config)
     directorId = dbDirectors.selectDirectorByName(fullname=movie["directors"][0])[0] 
     assert dbDirectors.selectDirectingById(directingId) == (directingId, directorId, movieId)

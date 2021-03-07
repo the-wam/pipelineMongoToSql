@@ -1,0 +1,97 @@
+CREATE TABLE IF NOT EXISTS Movies (
+    id_m SMALLINT AUTO_INCREMENT,
+    title_m VARCHAR(100),
+    year_m YEAR,
+    imdb_rating_m DOUBLE, 
+    imdb_vote_m MEDIUMINT, 
+    poster_m VARCHAR(255), 
+    plot_m TEXT, 
+    full_plot_m TEXT, 
+    tomates_viewer_m DOUBLE,
+    tomates_critic_m DOUBLE,
+    runtime_m INT,
+    UNIQUE KEY unique_movie (title_m,year_m, runtime_m),
+    PRIMARY KEY (id_m)
+) ENGINE = INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS Users (
+    id_u SMALLINT AUTO_INCREMENT,
+    login_u VARCHAR(50) NOT NULL,
+    email_u VARCHAR(50) NOT NULL,
+    password_u VARCHAR(60) NOT NULL,
+    birthDate_u date,
+    creationTimestamp_u TIMESTAMP,	
+    lastConnection_u TIMESTAMP,
+    level_u VARCHAR(5) DEFAULT 'user',
+    UNIQUE KEY unique_login (login_u),
+    UNIQUE KEY unique_email (email_u),
+    PRIMARY KEY (id_u)
+) ENGINE = INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS comments_rate (
+    id_c INT AUTO_INCREMENT,
+    date_c DATE,
+    id_u SMALLINT NOT NULL,
+    id_m SMALLINT NOT NULL,
+    rate_c FLOAT,
+    comment_c CHAR(255),	
+    FOREIGN KEY (id_u) REFERENCES Users(id_u),
+    FOREIGN KEY (id_m) REFERENCES Movies(id_m),
+    PRIMARY KEY (id_c),
+    UNIQUE KEY unique_rate (rate_c, id_u, id_m)
+) ENGINE = INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS Genres (
+    id_g SMALLINT AUTO_INCREMENT,
+    name_g VARCHAR(50),
+    PRIMARY KEY (id_g),
+    UNIQUE KEY unique_name_g (name_g)
+) ENGINE = INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS Type_movies (
+    id_t SMALLINT AUTO_INCREMENT,
+    id_g SMALLINT NOT NULL,
+    id_m SMALLINT NOT NULL,
+    FOREIGN KEY (id_g) REFERENCES Genres(id_g),
+    FOREIGN KEY (id_m) REFERENCES Movies(id_m),
+    PRIMARY KEY (id_t),
+    UNIQUE KEY unique_type(id_g, id_m)
+) ENGINE = INNODB;
+
+CREATE TABLE IF NOT EXISTS Directors (
+    id_d SMALLINT AUTO_INCREMENT,
+    firstname_d VARCHAR(50),
+    lastname_d VARCHAR(50),
+    fullname_d VARCHAR(255),
+    PRIMARY KEY (id_d),
+    UNIQUE KEY unique_director_g (firstname_d, lastname_d)
+) ENGINE = INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS Directing_by (
+    id_b SMALLINT AUTO_INCREMENT,
+    id_d SMALLINT NOT NULL,
+    id_m SMALLINT NOT NULL,
+    FOREIGN KEY (id_d) REFERENCES Directors(id_d),
+    FOREIGN KEY (id_m) REFERENCES Movies(id_m),
+    PRIMARY KEY (id_b),
+    UNIQUE KEY unique_directing(id_d, id_m)
+) ENGINE = INNODB;
+
+CREATE TABLE IF NOT EXISTS Actors (
+    id_a SMALLINT AUTO_INCREMENT,
+    firstname_a VARCHAR(50),
+    lastname_a VARCHAR(50),
+    fullname_a VARCHAR(255),
+    PRIMARY KEY (id_a),
+    UNIQUE KEY unique_actor_g (firstname_a, lastname_a)
+) ENGINE = INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS Casting_with (
+    id_w SMALLINT AUTO_INCREMENT,
+    id_a SMALLINT NOT NULL,
+    id_m SMALLINT NOT NULL,
+    FOREIGN KEY (id_a) REFERENCES Actors(id_a),
+    FOREIGN KEY (id_m) REFERENCES Movies(id_m),
+    PRIMARY KEY (id_w),
+    UNIQUE KEY unique_casting(id_a, id_m)
+) ENGINE = INNODB;
